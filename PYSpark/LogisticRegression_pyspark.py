@@ -69,7 +69,7 @@ df_fpdata = df_fpdata\
 
 sqlContext.registerDataFrameAsTable(df_fpdata, 'fp');
 
-query = 'select * from fp limit 10';
+query = 'select * from fp limit 25000';
 
 print df_fpdata.printSchema();
 
@@ -153,9 +153,9 @@ data = df_trainingData.apply(parsePoint,axis=1);
 
 print data;
 
-#spark_df = sqlContext.createDataFrame(data);
-
-
+# spark_df = sqlContext.createDataFrame(data);
+# 
+# spark_data = spark_df.rdd;
 
 
 #df_trainingData = df_trainingData.take(100);
@@ -174,17 +174,17 @@ print data;
 
 #parseddata = parseddata.rdd.limit(100);
 
-model = LogisticRegressionWithSGD.train(sc.parallelize(data),iterations=100);
+model = LogisticRegressionWithSGD.train(sc.parallelize(data).cache(),iterations=100);
 
 # Evaluating the model on training data
 labelsAndPreds = data.map(lambda p: (p.label, model.predict(p.features)))
 print labelsAndPreds;
 trainErr = filter(lambda (v, p): v != p,labelsAndPreds);
 print trainErr;
-
-error = float(len(trainErr))/float(len(data));
-
-print "error----",error;
+# 
+# error = float(len(trainErr))/float(len(data));
+# 
+# print "error----",error;
 # print("Training Error = " + str(trainErr))
 
 
